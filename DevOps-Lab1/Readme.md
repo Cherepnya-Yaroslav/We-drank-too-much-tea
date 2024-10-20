@@ -126,7 +126,8 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-![demo]([https://github.com/{username}/{repository}/raw/{branch}/{path}/image.png](https://github.com/Cherepnya-Yaroslav/We-drank-too-much-tea/blob/main/DevOps-Lab1/img.gif))
+![2024-10-2022-31-34-ezgif com-video-to-gif-converter_(1)](https://github.com/user-attachments/assets/c4b06101-4a40-45cb-88cb-68b09b5d9629)
+
 
 ## Результаты
 
