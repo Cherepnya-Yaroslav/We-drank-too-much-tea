@@ -126,6 +126,8 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
+![demo]([https://github.com/{username}/{repository}/raw/{branch}/{path}/image.png](https://github.com/Cherepnya-Yaroslav/We-drank-too-much-tea/blob/main/DevOps-Lab1/img.gif))
+
 ## Результаты
 
 - Оба домена, `devopsitmo.ru` и `devopsitmo.online`, обслуживаются через HTTPS.
