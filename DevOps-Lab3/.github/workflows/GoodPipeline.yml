@@ -3,65 +3,71 @@ name: Good CI Pipeline
 on:
   push:
     branches:
-      - main
+      - Good-CICD
 
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-
+  build:
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up JDK 18
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '18'
           distribution: 'adopt'
 
-  build:
-    needs: prepare
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build with Maven
-        uses: actions/cache@v2
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven
 
+      - name: Build with Maven
+        run: mvn clean package
+
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Install Tomcat
         run: |
-          sudo apt-get install -y tomcat9 tomcat9-admin tomcat9-common
+          wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.98/bin/apache-tomcat-9.0.98.tar.gz
+          sudo mkdir -p /opt/tomcat
+          sudo tar xzvf apache-tomcat-9.0.98.tar.gz -C /opt/tomcat --strip-components=1
+          sudo chmod +x /opt/tomcat/bin/*.sh
+          sudo /opt/tomcat/bin/startup.sh
+
+      - name: Cache Tomcat installation
+        uses: actions/cache@v4
+        with:
+          path: /var/lib/tomcat9
+          key: ${{ runner.os }}-tomcat
 
       - name: Start Tomcat
         run: |
-          sudo systemctl start tomcat9
-          sudo systemctl status tomcat9
+          sudo /opt/tomcat/bin/startup.sh
 
-      - name: Build and Deploy with Maven
-        run: mvn clean package tomcat7:deploy
+      - name: Deploy to Tomcat
+        run: mvn package cargo:deploy -X
         env:
-          MAVEN_OPTS: "-Dtomcat.url=http://localhost:8080/manager/text \
-                           -Dtomcat.username=${{ secrets.USERNAME }} \
-                           -Dtomcat.password=${{ secrets.TOMCAT_PASSWORD }}"
+          TOMCAT_USERNAME: ${{ secrets.TOMCAT_USERNAME }}
+          TOMCAT_PASSWORD: ${{ secrets.TOMCAT_PASSWORD }}
 
   test:
     needs: deploy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Run Tests
         run: mvn test
