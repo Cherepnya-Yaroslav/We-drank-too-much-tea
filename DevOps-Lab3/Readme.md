@@ -45,4 +45,4 @@ Maven загружает все зависимости каждый раз, чт
 https://github.com/Creepmoon/DevOpsLab3/actions/runs/11426478588/
 
 <h3>Pipline с исправлеными практиками</h3>
-https://github.com/Creepmoon/DevOpsLab3/actions/runs/11428819916
+https://github.com/Creepmoon/DevOpsLab3/actions/runs/12482237984
